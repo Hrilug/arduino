@@ -1,16 +1,15 @@
 #include<ESP8266WiFi.h>
 
-//家里的wifi名称和密码
 const char* ssid = "CMCC-603";
 const char* password = "h18017395008";
 
-//服务器设置端口
-WiFiServer server(80);
+WiFiServer server(80);//服务端口
 String data = "";
+
  void setup() {
   
   //开启串口监视器
-  Serial.begin(9600);
+  Serial.begin(115200);
   
   //开启wifi:用户名+密码
   WiFi.begin(ssid,password);
@@ -40,13 +39,10 @@ void loop() {
   Serial.println("客户端与服务器连接上");
   //客户端是否与服务器连上
   while(client){
-      //如果没有东西输入了,就检查data是否为空,如果data不为空,就打印出来,并将data清空
      if(!client.available()){
-      //如果data不为空,则什么
       if(data != "")
         Serial.println(data);
         data = "";
-    //Serial.println("没有消息");
       }
     else if (client.available()) {
       //如果有一句话过来,则每执行一个while循环就往data添加字符（有信息过来会连续执行else if语句）

@@ -1,10 +1,11 @@
 #include "Arduino.h"
 #include "airx.h"
 
-void airx::init(char pin_, int model_)
+void airx::init(char pin_, int model_,char name_[])
 {
   pin = pin_;
   model = model_;
+  char name[] = name_[];
   pinMode(pin, INPUT);
   airx::get();
 }

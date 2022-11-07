@@ -30,10 +30,10 @@ void loop() {
   if (n > 0) {
      while (Serial2.available() > 0)  
     {
-        str += char(Serial2.read());
+        str += uint8_t(Serial2.read());
         delay(2);
     }
-    Serial.print("GET:");
+    //Serial.print("GET:");
     Serial.println(str);
     display.clearDisplay();
     display.setTextColor(WHITE);

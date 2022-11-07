@@ -6,35 +6,35 @@
 #define SCREEN_ADDRESS 0x3C
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
 
-airx gun, xa, ya, left, right, key1, key2, key3, key4, key5, key6;
-tpyedef mem[6] = [ key1, key2, key3, key4, key5, key6 ];
+airx gun, xa, ya, key1, key2, key3, key4, key5, key6;
+airx mem[6] = { key1, key2, key3, key4, key5, key6 };
 int data[6];
 int mode = 0;
 
-void setup()
-{
+void setup() {
   Serial.begin(115200);
   Serial.println("Hello,It's AirX!");
-  gun.init(A0, 1);
-  xa.init(A1, 1);
-  ya.init(A2, 1);
-  left.init(11, 0);
-  right.init(12, 0);
-  key1.init(5, 0);
-  key2.init(6, 0);
-  key3.init(7, 0);
-  key4.init(8, 0);
-  key5.init(9, 0);
-  key6.init(10, 0);
+  gun.init(A0, 2, 'gun');
+  xa.init(A1, 2, 'xa');
+  ya.init(A2, 2, 'ya');
+  key1.init(5, 1, 'key1');
+  key2.init(6, 1, 'key2');
+  key3.init(7, 1, 'key3');
+  key4.init(8, 1, 'key4');
+  key5.init(9, 1, 'key5');
+  key6.init(10, 1, 'key6');
 
-  data = [ key1.get(), key2.get(), key3.get(), key4.get(), key5.get(), key6.get() ];
+  pinMode(11,INPUT_PULLUP);
+  pinMode(12,INPUT_PULLUP);
 
-  if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS))
-  {
-    Serial.println(F("SSD1306 allocation failed"));
-    for (;;)
-      ;
-  }
+  data[0] = key1.get();
+  data[1] = key2.get();
+  data[2] = key3.get();
+  data[3] = key4.get();
+  data[4] = key5.get();
+  data[5] = key6.get();
+
+  display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS);
   display.setTextColor(WHITE);
   display.clearDisplay();
   display.setTextSize(2);
@@ -46,21 +46,20 @@ void setup()
   delay(500);
 }
 
-void loop()
-{
-  if (left.get() == 1 and mode == 1)
-  {
+void loop() {
+  //Serial.print(gun.get());
+  //Serial.print(xa.get());
+  //Serial.println(ya.get());
+
+  if (digitalRead(11) == 0) {
     mode = 0;
     display.clearDisplay();
-  }
-  else if (right.get() == 1 and mode == 0)
-  {
+  } else if (digitalRead(12) == 0) {
     mode = 1;
     display.clearDisplay();
   }
 
-  if (mode == 0)
-  {
+  if (mode == 0) {
     display.clearDisplay();
     display.setTextSize(2);
     display.setCursor(0, 5);
@@ -77,27 +76,21 @@ void loop()
     display.println(ya.get());
     display.display();
     delay(50);
-  }
-  else if (mode == 1)
-  {
-    int ldata = [ key1.get(), key2.get(), key3.get(), key4.get(), key5.get(), key6.get() ];
-    if (ldata != data)
-    {
-      int con = 6;
-      while (con <= 1)
-      {
-        if (ldata[con] != data[con])
-        {
-          display.clearDisplay();
-          sidplay.setTextSize(2);
-          display.setCursor(0, 5);
-          display.println(mem[con].name);
-          display.setCursor(0, 25);
-          display.println(ldata[con]);
-          sidplay.display();
-        }
-      }
-      data = lata;
+  } else if (mode == 1) {
+    int ldata[6] = { key1.get(), key2.get(), key3.get(), key4.get(), key5.get(), key6.get() };
+    for (int con = 5; con <= 0; con--) {
+      Serial.println(ldata[con]);
+    }
+
+    display.clearDisplay();
+    display.setTextSize(2);
+    display.setCursor(0, 5);
+    for (int con = 5; con <= 0; con--) {
+      display.println(ldata[con]);
+    }
+    display.display();
+    for (int con = 5; con <= 0; con--) {
+      data[con] = ldata[con];
     }
   }
 }

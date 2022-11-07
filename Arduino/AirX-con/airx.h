@@ -9,8 +9,9 @@ class airx
     char pin;
     int key;
     int model;
-    
-    void init(char pin_,int model_);
+    char name[];
+
+    void init(char pin_,int model_,char name_[]);
     int get();
 };
 

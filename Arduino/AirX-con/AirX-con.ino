@@ -2,6 +2,7 @@
 #include "Adafruit_SSD1306.h"
 #include "Adafruit_GFX.h"
 #include "airx.h"
+#include <MsTimer2.h>
 
 #define SCREEN_ADDRESS 0x3C
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
@@ -11,21 +12,26 @@ airx mem[6] = { key1, key2, key3, key4, key5, key6 };
 int data[6];
 int mode = 0;
 
+void reset() {
+  mode = 0;
+  MsTimer2::stop();
+}
+
 void setup() {
   Serial.begin(115200);
   Serial.println("Hello,It's AirX!");
-  gun.init(A0, 2, 'gun');
-  xa.init(A1, 2, 'xa');
-  ya.init(A2, 2, 'ya');
-  key1.init(5, 1, 'key1');
-  key2.init(6, 1, 'key2');
-  key3.init(7, 1, 'key3');
-  key4.init(8, 1, 'key4');
-  key5.init(9, 1, 'key5');
-  key6.init(10, 1, 'key6');
+  gun.init(A0, 2, "gun");
+  xa.init(A1, 2, "xa");
+  ya.init(A2, 2, "ya");
+  key1.init(5, 1, "key1");
+  key2.init(6, 1, "key2");
+  key3.init(7, 1, "key3");
+  key4.init(8, 1, "key4");
+  key5.init(9, 1, "key5");
+  key6.init(10, 1, "key6");
 
-  pinMode(11,INPUT_PULLUP);
-  pinMode(12,INPUT_PULLUP);
+  pinMode(11, INPUT_PULLUP);
+  pinMode(12, INPUT_PULLUP);
 
   data[0] = key1.get();
   data[1] = key2.get();
@@ -43,20 +49,33 @@ void setup() {
   display.display();
   delay(2000);
   display.clearDisplay();
-  delay(500);
+  delay(100);
 }
 
 void loop() {
-  //Serial.print(gun.get());
-  //Serial.print(xa.get());
-  //Serial.println(ya.get());
-
-  if (digitalRead(11) == 0) {
-    mode = 0;
-    display.clearDisplay();
-  } else if (digitalRead(12) == 0) {
-    mode = 1;
-    display.clearDisplay();
+  int ldata[6] = { key1.get(), key2.get(), key3.get(), key4.get(), key5.get(), key6.get() };
+  for (int con = 0; con <= 5; con++) {
+    if (data[con] != ldata[con]) {
+      if (mode == 0) {
+        mode = 1;
+        MsTimer2::set(1000, reset);
+        MsTimer2::start();
+      } else if (mode == 1) {
+        MsTimer2::stop();
+        MsTimer2::set(1000, reset);
+        MsTimer2::start();
+      }
+      display.clearDisplay();
+      display.setTextSize(2);
+      display.setCursor(0, 5);
+      display.println(mem[con].name);
+      if (ldata[con] == 0) {
+        display.println(":on");
+      } else if (ldata[con] == 1) {
+        display.println(":off");
+      }
+      data[con] = ldata[con];
+    }
   }
 
   if (mode == 0) {
@@ -76,21 +95,5 @@ void loop() {
     display.println(ya.get());
     display.display();
     delay(50);
-  } else if (mode == 1) {
-    int ldata[6] = { key1.get(), key2.get(), key3.get(), key4.get(), key5.get(), key6.get() };
-    for (int con = 5; con <= 0; con--) {
-      Serial.println(ldata[con]);
-    }
-
-    display.clearDisplay();
-    display.setTextSize(2);
-    display.setCursor(0, 5);
-    for (int con = 5; con <= 0; con--) {
-      display.println(ldata[con]);
-    }
-    display.display();
-    for (int con = 5; con <= 0; con--) {
-      data[con] = ldata[con];
-    }
   }
 }

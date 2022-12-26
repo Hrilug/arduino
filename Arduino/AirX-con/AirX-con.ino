@@ -2,7 +2,7 @@
 #include "Adafruit_SSD1306.h"
 #include "Adafruit_GFX.h"
 #include "airx.h"
-#include <MsTimer2.h>
+//#include <MsTimer2.h>
 
 #define SCREEN_ADDRESS 0x3C
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
@@ -12,10 +12,10 @@ airx mem[6] = { key1, key2, key3, key4, key5, key6 };
 int data[6];
 int mode = 0;
 
-void reset() {
-  mode = 0;
-  MsTimer2::stop();
-}
+// void reset() {
+//   mode = 0;
+//   MsTimer2::stop();
+// }
 
 void setup() {
   Serial.begin(115200);
@@ -53,30 +53,30 @@ void setup() {
 }
 
 void loop() {
-  int ldata[6] = { key1.get(), key2.get(), key3.get(), key4.get(), key5.get(), key6.get() };
-  for (int con = 0; con <= 5; con++) {
-    if (data[con] != ldata[con]) {
-      if (mode == 0) {
-        mode = 1;
-        MsTimer2::set(1000, reset);
-        MsTimer2::start();
-      } else if (mode == 1) {
-        MsTimer2::stop();
-        MsTimer2::set(1000, reset);
-        MsTimer2::start();
-      }
-      display.clearDisplay();
-      display.setTextSize(2);
-      display.setCursor(0, 5);
-      display.println(mem[con].name);
-      if (ldata[con] == 0) {
-        display.println(":on");
-      } else if (ldata[con] == 1) {
-        display.println(":off");
-      }
-      data[con] = ldata[con];
-    }
-  }
+  // int ldata[6] = { key1.get(), key2.get(), key3.get(), key4.get(), key5.get(), key6.get() };
+  // for (int con = 0; con <= 5; con++) {
+  //   if (data[con] != ldata[con]) {
+  //     if (mode == 0) {
+  //       mode = 1;
+  //       MsTimer2::set(1000, reset);
+  //       MsTimer2::start();
+  //     } else if (mode == 1) {
+  //       MsTimer2::stop();
+  //       MsTimer2::set(1000, reset);
+  //       MsTimer2::start();
+  //     }
+  //     display.clearDisplay();
+  //     display.setTextSize(2);
+  //     display.setCursor(0, 5);
+  //     display.println(mem[con].name);
+  //     if (ldata[con] == 0) {
+  //       display.println(":on");
+  //     } else if (ldata[con] == 1) {
+  //       display.println(":off");
+  //     }
+  //     data[con] = ldata[con];
+  //   }
+  // }
 
   if (mode == 0) {
     display.clearDisplay();

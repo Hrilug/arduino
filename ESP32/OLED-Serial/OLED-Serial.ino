@@ -5,11 +5,13 @@
 #include <Adafruit_GFX.h>
 
 #define OLED_RESET     0
-Adafruit_SSD1306 display(OLED_RESET);
+Adafruit_SSD1306 display( 128, 64, &Wire, OLED_RESET);
 
 void setup() {
   Serial.begin(115200);
   Serial2.begin(115200, SERIAL_8N1, 16, 17);
+
+  Wire.begin(/*SDA*/13,/*SCL*/14);
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
 
   display.clearDisplay();
